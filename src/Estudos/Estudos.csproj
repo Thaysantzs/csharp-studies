@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <StartupObject>DataStructures.BinarySearchTree.BinarySearchTreeApp</StartupObject>
+    <StartupObject>DataStructures.Heap.HeapApp</StartupObject>
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>

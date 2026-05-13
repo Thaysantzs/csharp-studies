@@ -5,6 +5,10 @@ public class HeapApp
     public static void Main(string[] args)
     {
         int[] Data = new int[16] {50, 25, 75, 12, 35, 65, 90, 5, 47, 85, 100, 4, 6, 40, 49, 89};
+
+        var heap = new MyHeap(Data);
+        heap.add(79);
+        heap.Print();
     }
 }
 
@@ -61,8 +65,42 @@ public class MyHeap
         Data[Right] = aux;
     }
 
-    private (int Left, int Right) GetChildrenIndexes (int index)
+    private (int Left, int Right) GetChildrenIndexes (int index) // Get index chield
     {
         return(index * 2 + 1, index * 2 + 2);
+    }
+
+    public void add(int value)
+    {
+        Data.Add(79);
+        int index = Data.Count - 1;
+        int parent = GetParentIndex(index);
+        add(index, parent);
+    }
+
+    private void add(int index, int parent)
+    {
+        if(Data[index] < Data[parent])
+        {
+            return;
+        }
+
+        Swap(parent, index);
+        index = parent;
+        parent = GetParentIndex(parent);
+        add(index, parent);
+    }
+
+    private int GetParentIndex(int index) // Get index parent
+    {
+        return (index - 1) / 2;
+    }
+
+    public void Print()
+    {
+        foreach(var element in Data)
+        {
+            Console.Write($"{element}, ");
+        }
     }
 }
