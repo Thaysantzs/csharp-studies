@@ -75,9 +75,16 @@ public class MyHeap
         Data.Add(79);
         int index = Data.Count - 1;
         int parent = GetParentIndex(index);
-        add(index, parent);
+
+        while(Data[index] > Data[parent])
+        {
+            Swap(parent, index);
+            index = parent;
+            parent = GetParentIndex(parent);
+        }
     }
 
+    /* --> Recusive version
     private void add(int index, int parent)
     {
         if(Data[index] < Data[parent])
@@ -90,12 +97,26 @@ public class MyHeap
         parent = GetParentIndex(parent);
         add(index, parent);
     }
+    */
 
     private int GetParentIndex(int index) // Get index parent
     {
         return (index - 1) / 2;
     }
 
+    public int Pop()
+    {
+        if(Data.Count == 0)
+        {
+            throw new Exception("The heap is empty");
+        }
+
+        int max = Data[0];
+        Data[0] = Data[Data.Count - 1];
+        Data.RemoveAt(Data.Count - 1);
+        Heapify(0);
+        return max;
+    }
     public void Print()
     {
         foreach(var element in Data)
