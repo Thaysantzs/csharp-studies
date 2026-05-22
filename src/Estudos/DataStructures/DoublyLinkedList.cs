@@ -1,9 +1,8 @@
 using System;
 using System.Collections;
-using System.IO.Compression;
 namespace DataStructures.NewLinked;
 
-public class NewLinkedApp
+/*public class NewLinkedApp
 {
     public static void Main(string[] args)
     {
@@ -13,10 +12,10 @@ public class NewLinkedApp
         list.AddAtTail("Node 0");
         list.AddAtTail("Node 1"); // x
         list.AddAtTail("Node 2"); // x
-        list.AddAtTail("Node 3");
-        list.AddAtTail("Node 4"); // x
-        list.AddAtTail("Node 6"); // x
-        list.AddAtTail("Node 8"); // x
+        list.AddAtHead("Node -1");
+        list.AddAtHead("Node -2");
+        list.AddAtTail("Node 4");
+        list.AddAt("Node 3", 5);
 
         foreach(string node in list)
         {
@@ -24,7 +23,7 @@ public class NewLinkedApp
         }
 
     }
-}
+}*/
 
 public class DoublyLinkedList<T> : IEnumerable<T>
 {

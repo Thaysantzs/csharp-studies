@@ -23,6 +23,14 @@ using System;
 using DataStructures.NewLinked;
 namespace DataStructures.Newqueue;
 
+public class QueueApp
+{
+    public static void Main(string[] args)
+    {
+
+    }
+}
+
 public class NewQueue<T>
 {
     private readonly DoublyLinkedList<T> _list;
