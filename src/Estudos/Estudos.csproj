@@ -2,7 +2,7 @@
   To run any code, you need to insert the namespace and class name after the dot in the StratupObject
 
   example: 
-      <StratupObject>NAMESPACE.CLASSNAME</StratupObject>
+      StratupObject -- NAMESPACE.CLASSNAME -- StratupObject
 */
 <Project Sdk="Microsoft.NET.Sdk">
 
