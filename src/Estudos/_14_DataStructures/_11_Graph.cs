@@ -33,13 +33,17 @@ public class GraphApp
         _graph.AddEdge("B", "D");
         _graph.AddEdge("B", "E");
         _graph.AddEdge("C", "F");
+        _graph.AddEdge("C", "F");
 
         // _graph.Print();
 
         _graph.DFS("A");
         Console.WriteLine();
-        _graph.BFS("A");
 
+        _graph.BFS("A");
+        Console.WriteLine();
+
+        _graph.ShortestPath("A", "D");
     }
 }
 public class NewGraph
@@ -122,6 +126,45 @@ public class NewGraph
                 }
             }
         }
+    }
+
+    // ShortTestPath
+    public void ShortestPath(string start, string target)
+    {
+        var parent = new Dictionary<string, string>();
+        var visited = new HashSet<string>();
+        var line = new Queue<string>();
+        line.Enqueue(start);
+        visited.Add(start);
+
+        while(line.Count > 0)
+        {
+            start = line.Dequeue();
+
+            foreach(var neighbor in _graph[start])
+            {
+                if (!visited.Contains(neighbor))
+                {
+                    visited.Add(neighbor);
+                    line.Enqueue(neighbor);
+                    parent.Add(neighbor, start);
+                }
+            }
+        }
+
+        Revertshort(parent, target);
+    }
+
+    private void Revertshort(Dictionary<string, string> parent, string target)
+    {
+        if(!parent.ContainsKey(target))
+        {
+          Console.Write($"--> {target}");
+          return;  
+        }
+
+        Revertshort(parent, parent[target]);
+        Console.Write($" --> {target}");
     }
 
     public void Print()
