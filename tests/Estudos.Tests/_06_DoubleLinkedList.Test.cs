@@ -1,4 +1,3 @@
-using Aulas_C_teste;
 using DataStructures.DoubleLinkedList;
 using NUnit.Framework;
 namespace Estudos.Tests;

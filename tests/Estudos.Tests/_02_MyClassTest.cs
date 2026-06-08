@@ -1,5 +1,5 @@
-﻿using Aulas_C_teste;
-using NUnit.Framework;
+﻿using NUnit.Framework;
+using Primeirotest;
 namespace Estudos.Tests;
 
 [TestFixture]

@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 namespace DataStructures.NewLinked;
 
-/*public class NewLinkedApp
+public class NewLinkedApp
 {
     public static void Main(string[] args)
     {
@@ -23,7 +23,7 @@ namespace DataStructures.NewLinked;
         }
 
     }
-}*/
+}
 
 public class DoublyLinkedList<T> : IEnumerable<T>
 {

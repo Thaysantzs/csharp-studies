@@ -1,5 +1,5 @@
 using System;
-namespace Aulas_C_teste;
+namespace Primeirotest;
 
 public class MyClass
 {

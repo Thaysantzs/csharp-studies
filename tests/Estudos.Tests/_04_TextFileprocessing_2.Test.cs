@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using Aulas_C_teste;
 using NUnit.Framework;
 namespace Estudos.Tests;
 
