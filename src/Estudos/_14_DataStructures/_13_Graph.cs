@@ -15,35 +15,37 @@ public class BuildGraph
         graph.AddVertex("C");
         graph.AddVertex("D");
         graph.AddVertex("E");
+        graph.AddVertex("F");
 
         // ADD EDGE
-        graph.AddEdge("A", "B");
-        graph.AddEdge("A", "C");
-        graph.AddEdge("B", "D");
-        graph.AddEdge("C", "D");
-        graph.AddEdge("D", "E");
-
-        // REMOVE VERTEX
-        //graph.RemoveVertex("D");
-
-        //REMOVE EDGE
-        //graph.RemoveEdge("D", "B");
-        //graph.RemoveEdge("D", "C");
+        graph.AddEdge("A", "C", 8);
+        graph.AddEdge("A", "B", 10);
+        graph.AddEdge("A", "D", 15);
+        graph.AddEdge("B", "D", 7);
+        graph.AddEdge("C", "D", 5);
+        graph.AddEdge("C", "E", 10);
+        graph.AddEdge("D", "E", 1);
+        graph.AddEdge("D", "F", 4);
+        graph.AddEdge("E", "F", 2);
 
         // DFS
-        Console.Write("DFS: ");
+        Console.Write("DFS:");
         graph.DFS("A");
         Console.WriteLine();
 
         // BFS
-        Console.Write("BFS: ");
+        Console.Write("BFS:");
         graph.BFS("A");
         Console.WriteLine();
 
         // ShortPath
-        Console.Write("ShortPath: ");
-        graph.ShortPath("A", "D");
+        Console.Write("ShortPath:");
+        graph.ShortPath("A", "F");
+        Console.WriteLine();
 
+        // Dijkstra
+        Console.Write($"Dijkstra:");
+        graph.Dijkstra("A", "F");
     }
 }
 
@@ -53,12 +55,25 @@ public class Graph<T> where T : notnull
     private class Node
     {
         public T Data { get; private set; }
-        public List<Node> AdjacentNodes { get; private set; }
+        public List<Edge> AdjacentNodes { get; private set; }
 
         public Node(T data)
         {
             Data = data;
-            AdjacentNodes = new List<Node>();
+            AdjacentNodes = new List<Edge>();
+        }
+    }
+
+    // Class Edge
+    private class Edge
+    {
+        public Node Destination { get; set; }
+        public int Weight { get; set; }
+
+        public Edge(Node destination, int weight)
+        {
+            Destination = destination;
+            Weight = weight;
         }
     }
 
@@ -81,16 +96,16 @@ public class Graph<T> where T : notnull
     }
 
     // add edge
-    public void AddEdge(T key, T vertex)
+    public void AddEdge(T source, T destination, int weight)
     {
-        if(!_graph.ContainsKey(key) || !_graph.ContainsKey(vertex))
+        if(!_graph.ContainsKey(source) || !_graph.ContainsKey(destination))
         {
             throw new KeyNotFoundException("The key not found.");
         }
 
-        if (!_graph[key].AdjacentNodes.Contains(_graph[vertex]))
+        if(!_graph[source].AdjacentNodes.Any(e => e.Destination == _graph[destination]))
         {
-            _graph[key].AdjacentNodes.Add(_graph[vertex]);
+            _graph[source].AdjacentNodes.Add(new Edge(_graph[destination], weight));
         }
     }
 
@@ -103,11 +118,13 @@ public class Graph<T> where T : notnull
             throw new KeyNotFoundException("The key not found.");
         }
 
-        var nodeToRemove = _graph[target];
-
-        foreach(var item in _graph)
+        var NodeToRemove = _graph[target];
+        
+        foreach(var node in _graph.Values)
         {
-            item.Value.AdjacentNodes.Remove(nodeToRemove);
+            node.AdjacentNodes.RemoveAll(
+                e => e.Destination == NodeToRemove
+            );
         }
 
         return _graph.Remove(target);
@@ -121,7 +138,18 @@ public class Graph<T> where T : notnull
             throw new KeyNotFoundException("The key not found.");
         }
 
-        return _graph[source].AdjacentNodes.Remove(_graph[destination]);
+        var sourceNode = _graph[source];
+        var destinationNode = _graph[destination];
+
+        var edgeToRemove = sourceNode.AdjacentNodes.FirstOrDefault(e => e.Destination == destinationNode);
+
+        if (edgeToRemove == null)
+        {
+            return false;
+        }
+
+        sourceNode.AdjacentNodes.Remove(edgeToRemove);
+        return true;
     }
 
     // DFS
@@ -149,9 +177,9 @@ public class Graph<T> where T : notnull
         visited.Add(vertex);
         Console.Write($" -> {vertex.Data}");
 
-        foreach(var neighbor in vertex.AdjacentNodes)
+        foreach(var edge in vertex.AdjacentNodes)
         {
-            DFS(neighbor, visited);
+            DFS(edge.Destination, visited);
         }
 
     }
@@ -164,7 +192,7 @@ public class Graph<T> where T : notnull
             throw new KeyNotFoundException("The key not found.");
         }
 
-        var node = _graph[vertex];
+        var node = GetNode(vertex);
         BFS(node);
     }
     private void BFS(Node start)
@@ -179,12 +207,12 @@ public class Graph<T> where T : notnull
         {
             var current = queue.Dequeue();
             Console.Write($" -> {current.Data}");
-            foreach(var neighbor in current.AdjacentNodes)
+            foreach(var edge in current.AdjacentNodes)
             {
-                if (!visited.Contains(neighbor))
+                if (!visited.Contains(edge.Destination))
                 {
-                    visited.Add(neighbor);
-                    queue.Enqueue(neighbor);
+                    visited.Add(edge.Destination);
+                    queue.Enqueue(edge.Destination);
                 }
             }
         }
@@ -198,8 +226,8 @@ public class Graph<T> where T : notnull
             throw new KeyNotFoundException("The key not found.");
         }
         
-        var _start = _graph[start];
-        var _target = _graph[target];
+        var _start = GetNode(start);
+        var _target = GetNode(target);
 
         ShortPath(_start, _target);
     }
@@ -224,14 +252,14 @@ public class Graph<T> where T : notnull
         while(queue.Count > 0)
         {
             var current = queue.Dequeue();
-            foreach(var neighbor in current.AdjacentNodes)
+            foreach(var edge in current.AdjacentNodes)
             {
 
-                if (!visited.Contains(neighbor))
+                if (!visited.Contains(edge.Destination))
                 {
-                    visited.Add(neighbor);
-                    queue.Enqueue(neighbor);
-                    parent.Add(neighbor, current);
+                    visited.Add(edge.Destination);
+                    queue.Enqueue(edge.Destination);
+                    parent.Add(edge.Destination, current);
                 }
             }
 
@@ -260,5 +288,91 @@ public class Graph<T> where T : notnull
         {
             Console.Write($" -> {stack.Pop().Data}");
         }
+    }
+
+    // Class Dijkstra
+    private class DijkstraTabelaEntry
+    {
+        public int Weight { get; set; }
+        public Node? Previous { get; set; }
+
+        public DijkstraTabelaEntry(int weight, Node previous)
+        {
+            Weight = weight;
+            Previous = previous;
+        }
+    }
+
+
+    // Dijkstra
+    public void Dijkstra(T start, T target)
+    {
+        var source = GetNode(start);
+        var destination = GetNode(target);
+
+        var visited = new HashSet<Node>();
+        var dijkstraTable = new Dictionary<Node, DijkstraTabelaEntry>();
+
+        foreach(var node in _graph.Values)
+        {
+            dijkstraTable[node] = new DijkstraTabelaEntry(int.MaxValue, null);
+        }
+
+        dijkstraTable[source].Weight = 0;
+        var ToVisiti = new PriorityQueue<Node,int>();
+        ToVisiti.Enqueue(source, 0);
+
+        while(ToVisiti.Count > 0)
+        {
+            var current = ToVisiti.Dequeue();
+            if (visited.Contains(current))
+            {
+                continue;
+            }
+
+            visited.Add(current);
+            foreach(var edge in current.AdjacentNodes)
+            {
+                var candidateWeight =  edge.Weight;
+                var weightFromTable = dijkstraTable[edge.Destination].Weight;
+
+                if(candidateWeight < weightFromTable)
+                {
+                    dijkstraTable[edge.Destination].Weight = candidateWeight;
+                    dijkstraTable[edge.Destination].Previous = current;
+                }
+
+                if (!visited.Contains(edge.Destination))
+                {
+                    ToVisiti.Enqueue(edge.Destination, candidateWeight);
+                }
+            }
+        }
+
+        if (!visited.Contains(destination))
+        {
+            Console.WriteLine($"Not found key");
+            return;
+        }
+
+        var stack = new Stack<Node>();
+
+        while(source != destination)
+        {
+            stack.Push(destination);
+            destination = dijkstraTable[destination].Previous;
+        }
+
+        stack.Push(source);
+
+        while(stack.Count > 0)
+        {
+            Console.Write($" --> {stack.Pop().Data}");
+        }
+    }
+
+    private Node GetNode(T start)
+    {
+        return _graph[start];
     }
 }
