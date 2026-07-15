@@ -296,7 +296,7 @@ public class Graph<T> where T : notnull
         public int Weight { get; set; }
         public Node? Previous { get; set; }
 
-        public DijkstraTabelaEntry(int weight, Node previous)
+        public DijkstraTabelaEntry(int weight, Node? previous)
         {
             Weight = weight;
             Previous = previous;
@@ -333,17 +333,13 @@ public class Graph<T> where T : notnull
             visited.Add(current);
             foreach(var edge in current.AdjacentNodes)
             {
-                var candidateWeight =  edge.Weight;
+                var candidateWeight = dijkstraTable[current].Weight + edge.Weight;
                 var weightFromTable = dijkstraTable[edge.Destination].Weight;
 
-                if(candidateWeight < weightFromTable)
+                if (candidateWeight < weightFromTable)
                 {
                     dijkstraTable[edge.Destination].Weight = candidateWeight;
                     dijkstraTable[edge.Destination].Previous = current;
-                }
-
-                if (!visited.Contains(edge.Destination))
-                {
                     ToVisiti.Enqueue(edge.Destination, candidateWeight);
                 }
             }
@@ -356,11 +352,12 @@ public class Graph<T> where T : notnull
         }
 
         var stack = new Stack<Node>();
+        var curent = destination;
 
-        while(source != destination)
+        while(source != curent)
         {
-            stack.Push(destination);
-            destination = dijkstraTable[destination].Previous;
+            stack.Push(curent);
+            curent = dijkstraTable[curent].Previous!;
         }
 
         stack.Push(source);
